@@ -107,12 +107,48 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !image) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
     const touch = e.touches[0];
-    const mouseX = touch.clientX - rect.left;
-    const mouseY = touch.clientY - rect.top;
+    const displayX = touch.clientX - rect.left;
+    const displayY = touch.clientY - rect.top;
+    
+    // Calculate scaling factor between display size and canvas size
+    const scaleX = 700 / rect.width;
+    const scaleY = 500 / rect.height;
+    
+    // Convert display coordinates to canvas coordinates
+    const canvasX = displayX * scaleX;
+    const canvasY = displayY * scaleY;
+    
+    // Calculate image position and size within canvas
+    const imgAspect = image.width / image.height;
+    const canvasAspect = 700 / 500;
+    
+    let drawWidth, drawHeight, offsetX, offsetY;
+    
+    if (imgAspect > canvasAspect) {
+      drawWidth = 700;
+      drawHeight = 700 / imgAspect;
+      offsetX = 0;
+      offsetY = (500 - drawHeight) / 2;
+    } else {
+      drawHeight = 500;
+      drawWidth = 500 * imgAspect;
+      offsetX = (700 - drawWidth) / 2;
+      offsetY = 0;
+    }
+    
+    // Check if touch is within the image bounds
+    if (canvasX < offsetX || canvasX > offsetX + drawWidth || 
+        canvasY < offsetY || canvasY > offsetY + drawHeight) {
+      return; // Touch is outside the image
+    }
+    
+    // Use canvas coordinates for drawing
+    const mouseX = canvasX;
+    const mouseY = canvasY;
   
     // Create a mock mouse event for compatibility
     const mockEvent = {
@@ -129,12 +165,38 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !image) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
     const touch = e.touches[0];
-    const mouseX = touch.clientX - rect.left;
-    const mouseY = touch.clientY - rect.top;
+    const displayX = touch.clientX - rect.left;
+    const displayY = touch.clientY - rect.top;
+    
+    // Calculate scaling factor between display size and canvas size
+    const scaleX = 700 / rect.width;
+    const scaleY = 500 / rect.height;
+    
+    // Convert display coordinates to canvas coordinates
+    const canvasX = displayX * scaleX;
+    const canvasY = displayY * scaleY;
+    
+    // Calculate image position and size within canvas
+    const imgAspect = image.width / image.height;
+    const canvasAspect = 700 / 500;
+    
+    let drawWidth, drawHeight, offsetX, offsetY;
+    
+    if (imgAspect > canvasAspect) {
+      drawWidth = 700;
+      drawHeight = 700 / imgAspect;
+      offsetX = 0;
+      offsetY = (500 - drawHeight) / 2;
+    } else {
+      drawHeight = 500;
+      drawWidth = 500 * imgAspect;
+      offsetX = (700 - drawWidth) / 2;
+      offsetY = 0;
+    }
   
     const mockEvent = {
       clientX: touch.clientX,
@@ -563,11 +625,47 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !image) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const displayX = e.clientX - rect.left;
+    const displayY = e.clientY - rect.top;
+    
+    // Calculate scaling factor between display size and canvas size
+    const scaleX = 700 / rect.width;
+    const scaleY = 500 / rect.height;
+    
+    // Convert display coordinates to canvas coordinates
+    const canvasX = displayX * scaleX;
+    const canvasY = displayY * scaleY;
+    
+    // Calculate image position and size within canvas
+    const imgAspect = image.width / image.height;
+    const canvasAspect = 700 / 500;
+    
+    let drawWidth, drawHeight, offsetX, offsetY;
+    
+    if (imgAspect > canvasAspect) {
+      drawWidth = 700;
+      drawHeight = 700 / imgAspect;
+      offsetX = 0;
+      offsetY = (500 - drawHeight) / 2;
+    } else {
+      drawHeight = 500;
+      drawWidth = 500 * imgAspect;
+      offsetX = (700 - drawWidth) / 2;
+      offsetY = 0;
+    }
+    
+    // Check if click is within the image bounds
+    if (canvasX < offsetX || canvasX > offsetX + drawWidth || 
+        canvasY < offsetY || canvasY > offsetY + drawHeight) {
+      return; // Click is outside the image
+    }
+    
+    // Use canvas coordinates for drawing
+    const mouseX = canvasX;
+    const mouseY = canvasY;
 
     if (activeMode === 'crop') {
       if (cropFrame) {
@@ -607,11 +705,41 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !image) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const displayX = e.clientX - rect.left;
+    const displayY = e.clientY - rect.top;
+    
+    // Calculate scaling factor between display size and canvas size
+    const scaleX = 700 / rect.width;
+    const scaleY = 500 / rect.height;
+    
+    // Convert display coordinates to canvas coordinates
+    const canvasX = displayX * scaleX;
+    const canvasY = displayY * scaleY;
+    
+    // Calculate image position and size within canvas
+    const imgAspect = image.width / image.height;
+    const canvasAspect = 700 / 500;
+    
+    let drawWidth, drawHeight, offsetX, offsetY;
+    
+    if (imgAspect > canvasAspect) {
+      drawWidth = 700;
+      drawHeight = 700 / imgAspect;
+      offsetX = 0;
+      offsetY = (500 - drawHeight) / 2;
+    } else {
+      drawHeight = 500;
+      drawWidth = 500 * imgAspect;
+      offsetX = (700 - drawWidth) / 2;
+      offsetY = 0;
+    }
+    
+    // Use canvas coordinates for drawing
+    const mouseX = canvasX;
+    const mouseY = canvasY;
 
     if (activeMode === 'crop' && cropFrame) {
       if (resizingCropHandle) {
