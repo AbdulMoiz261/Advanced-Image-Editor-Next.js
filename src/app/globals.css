@@ -1309,7 +1309,8 @@ body {
 .arrow-dropdown {
   position: absolute;
   top: 100%;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -1317,6 +1318,7 @@ body {
   padding: 15px;
   margin-top: 5px;
   min-width: 200px;
+  max-width: 250px;
 }
 
 .arrow-dropdown-header {
@@ -1351,15 +1353,19 @@ body {
 /* Mobile responsiveness for drawing tool dropdown */
 @media (max-width: 768px) {
   .arrow-dropdown {
-    right: -50px;
+    left: 50%;
+    transform: translateX(-50%);
     min-width: 180px;
+    max-width: 200px;
   }
 }
 
 @media (max-width: 480px) {
   .arrow-dropdown {
-    right: -80px;
+    left: 50%;
+    transform: translateX(-50%);
     min-width: 160px;
+    max-width: 180px;
   }
   
   .arrow-color-option {
@@ -1377,6 +1383,7 @@ body {
   display: inline-block;
   flex: 1;
   min-width: 90px;
+  overflow: visible;
 }
 
 /* Drawing tool dropdown styles */

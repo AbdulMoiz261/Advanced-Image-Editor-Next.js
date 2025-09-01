@@ -198,6 +198,24 @@
     overflow: hidden;
   }
 
+  /* Desktop-specific styles (screens larger than 768px) */
+  @media (min-width: 769px) {
+    .uploadContainer {
+      min-height: 600px;
+      padding: 60px 40px;
+    }
+
+    .imageDisplayArea {
+      min-height: 500px;
+    }
+
+    .uploadContainer canvas {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
   .uploadContainer:hover {
     border-color: #8b5cf6;
     background-color: #f8f7ff;
