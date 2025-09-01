@@ -71,8 +71,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   const [lines, setLines] = useState<Line[]>([]);
   const [currentLine, setCurrentLine] = useState<Point[] | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [drawingColor, setDrawingColor] = useState('#FF0000');
-  const [brushSize, setBrushSize] = useState(3);
+  const [drawingColor, setDrawingColor] = useState('#FF8C00'); // Changed to orange to match the image
+  const [brushSize, setBrushSize] = useState(6); // Increased for thicker arrows
   
   // Camera state
   // const [isCameraActive, setIsCameraActive] = useState(false);
@@ -741,31 +741,42 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     return { ...obj, x, y, w, h };
   };
 
-  // Draw arrow function
+  // Draw arrow function - Proper arrow style with distinct shaft and arrowhead
   const drawArrow = (ctx: CanvasRenderingContext2D, fromX: number, fromY: number, toX: number, toY: number) => {
-    const headlen = 15;
     const angle = Math.atan2(toY - fromY, toX - fromX);
+    const shaftWidth = brushSize * 3; // Thicker shaft width
+    const headlen = shaftWidth * 2; // Smaller arrowhead length
+    const headWidth = shaftWidth * 1.5; // Smaller arrowhead width at base
     
     // Set the drawing style for the arrow
     ctx.strokeStyle = drawingColor;
     ctx.fillStyle = drawingColor;
-    ctx.lineWidth = brushSize;
+    ctx.lineWidth = shaftWidth;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     
-    // Draw line
+    // Calculate the point where shaft ends and arrowhead begins
+    const shaftEndX = toX - headlen * Math.cos(angle);
+    const shaftEndY = toY - headlen * Math.sin(angle);
+    
+    // Draw the shaft (straight line from start to arrowhead base)
     ctx.beginPath();
     ctx.moveTo(fromX, fromY);
-    ctx.lineTo(toX, toY);
+    ctx.lineTo(shaftEndX, shaftEndY);
     ctx.stroke();
     
-    // Draw arrowhead
+    // Draw arrowhead (triangle pointing to the tip)
     ctx.beginPath();
-    ctx.moveTo(toX, toY);
-    ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
-    ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+    ctx.moveTo(toX, toY); // Start at the tip
+    ctx.lineTo(shaftEndX - headWidth * Math.sin(angle), shaftEndY + headWidth * Math.cos(angle));
+    ctx.lineTo(shaftEndX + headWidth * Math.sin(angle), shaftEndY - headWidth * Math.cos(angle));
     ctx.closePath();
     ctx.fill();
+    
+    // Add outline to arrowhead for better definition
+    ctx.strokeStyle = drawingColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
   };
 
   
