@@ -932,32 +932,32 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (image) {
-      // Fill the entire canvas with the image, maintaining aspect ratio
-      const imgAspect = image.width / image.height;
-      const canvasAspect = canvas.width / canvas.height;
-      
-      let drawWidth, drawHeight, offsetX, offsetY;
-      
-      if (imgAspect > canvasAspect) {
-        // Image is wider than canvas - fit to width
-        drawWidth = canvas.width;
-        drawHeight = canvas.width / imgAspect;
-        offsetX = 0;
-        offsetY = (canvas.height - drawHeight) / 2;
-      } else {
-        // Image is taller than canvas - fit to height
-        drawHeight = canvas.height;
-        drawWidth = canvas.height * imgAspect;
-        offsetX = (canvas.width - drawWidth) / 2;
-        offsetY = 0;
-      }
-      
-      // Fill background with transparent
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw the image
-      ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+                   if (image) {
+        // Fill the entire canvas with the image using contain mode (like CSS object-fit: contain)
+        const imgAspect = image.width / image.height;
+        const canvasAspect = canvas.width / canvas.height;
+        
+        let drawWidth, drawHeight, offsetX, offsetY;
+        
+        if (imgAspect > canvasAspect) {
+          // Image is wider than canvas - fit to width and center height
+          drawWidth = canvas.width;
+          drawHeight = canvas.width / imgAspect;
+          offsetX = 0;
+          offsetY = (canvas.height - drawHeight) / 2;
+        } else {
+          // Image is taller than canvas - fit to height and center width
+          drawHeight = canvas.height;
+          drawWidth = canvas.height * imgAspect;
+          offsetX = (canvas.width - drawWidth) / 2;
+          offsetY = 0;
+        }
+        
+        // Fill background with transparent
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw the image to fit within the canvas (contain mode)
+        ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
     } else {
       // Show upload placeholder
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1096,38 +1096,38 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               </button>
             </div>
           </>
-                 ) : image && !isCameraFullscreen ? (
-           <div className={styles.imageDisplayArea}>
+        ) : image && !isCameraFullscreen ? (
+          <div className={styles.imageDisplayArea}>
              {/* Transparent overlay to capture all interactions */}
              <div 
                className={styles.interactionOverlay}
-               onMouseDown={handleMouseDown}
-               onMouseMove={handleMouseMove}
-               onMouseUp={handleMouseUp}
-               onTouchStart={handleTouchStart}
-               onTouchMove={handleTouchMove}
-               onTouchEnd={handleTouchEnd}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
                onContextMenu={(e) => e.preventDefault()}
                onDragStart={(e) => e.preventDefault()}
                onSelectStart={(e) => e.preventDefault()}
                style={{ cursor: getCursor() }}
              />
-             <canvas
-               ref={canvasRef}
-               width={700}
-               height={500}
-               style={{ 
-                 width: '100%',
-                 height: '100%',
-                 objectFit: 'contain',
-                 pointerEvents: 'none',
-                 position: 'absolute',
-                 top: 0,
-                 left: 0,
-                 zIndex: 1
-               }}
-             />
-           </div>
+                                                       <canvas
+                 ref={canvasRef}
+                 width={700}
+                 height={500}
+                style={{ 
+                   width: '100%',
+                   height: '100%',
+                   objectFit: 'cover',
+                   pointerEvents: 'none',
+                   position: 'absolute',
+                   top: 0,
+                   left: 0,
+                   zIndex: 1
+                }}
+              />
+          </div>
         ) : null}
         
         <input

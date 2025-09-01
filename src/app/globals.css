@@ -1150,7 +1150,7 @@ body {
   }
   
   .image-upload-area {
-    padding: 40px 20px;
+    padding: 0px 0px;
     min-height: 350px;
   }
   
@@ -1233,7 +1233,7 @@ body {
   }
   
   .image-upload-area {
-    padding: 30px 15px;
+    padding: 0px 0px;
     min-height: 250px;
     border-radius: 10px;
   }
