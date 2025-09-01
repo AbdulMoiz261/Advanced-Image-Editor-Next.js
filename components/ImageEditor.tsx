@@ -102,7 +102,9 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     };
   }, []);
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (!canvasRef.current) return;
@@ -119,12 +121,12 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       preventDefault: () => e.preventDefault(),
       stopPropagation: () => e.stopPropagation(),
       // Add other required properties as needed
-    } as unknown as React.MouseEvent<HTMLCanvasElement>;
+    } as unknown as React.MouseEvent<HTMLDivElement>;
     
     handleMouseDown(mockEvent);
   };
   
-  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (!canvasRef.current) return;
@@ -139,12 +141,12 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       clientY: touch.clientY,
       preventDefault: () => e.preventDefault(),
       stopPropagation: () => e.stopPropagation(),
-    } as unknown as React.MouseEvent<HTMLCanvasElement>;
+    } as unknown as React.MouseEvent<HTMLDivElement>;
     
     handleMouseMove(mockEvent);
   };
   
-  const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     handleMouseUp();
@@ -556,7 +558,11 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   };
 
   // Mouse down handler
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Always prevent default to stop any unwanted interactions
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (!canvasRef.current) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
@@ -593,11 +599,14 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       setIsDrawing(true);
       setCurrentLine([{ x: mouseX, y: mouseY }]);
     }
-    // If activeMode is 'none', do nothing - no drawing allowed
+    // If activeMode is 'none', still prevent default to stop unwanted interactions
   };
 
   // Mouse move handler
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (!canvasRef.current) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
@@ -633,7 +642,12 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   };
 
   // Mouse up handler
-  const handleMouseUp = () => {
+  const handleMouseUp = (e?: React.MouseEvent<HTMLDivElement>) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     if (activeMode === 'crop' && isDrawing && cropFrame) {
       // Finalize crop frame
       if (cropFrame.w < 0) {
@@ -954,31 +968,38 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               </button>
             </div>
           </>
-        ) : image && !isCameraFullscreen ? (
-          <div className={styles.imageDisplayArea}>
-            <canvas
-              ref={canvasRef}
-              width={700}
-              height={500}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              style={{ 
-                cursor: getCursor(),
-                 touchAction: 'none',
-                 WebkitUserSelect: 'none',
-                 MozUserSelect: 'none',
-                 msUserSelect: 'none',
-                 userSelect: 'none',
+                 ) : image && !isCameraFullscreen ? (
+           <div className={styles.imageDisplayArea}>
+             {/* Transparent overlay to capture all interactions */}
+             <div 
+               className={styles.interactionOverlay}
+               onMouseDown={handleMouseDown}
+               onMouseMove={handleMouseMove}
+               onMouseUp={handleMouseUp}
+               onTouchStart={handleTouchStart}
+               onTouchMove={handleTouchMove}
+               onTouchEnd={handleTouchEnd}
+               onContextMenu={(e) => e.preventDefault()}
+               onDragStart={(e) => e.preventDefault()}
+               onSelectStart={(e) => e.preventDefault()}
+               style={{ cursor: getCursor() }}
+             />
+             <canvas
+               ref={canvasRef}
+               width={700}
+               height={500}
+               style={{ 
                  width: '100%',
                  height: '100%',
-                 objectFit: 'contain'
-              }}
-            />
-          </div>
+                 objectFit: 'contain',
+                 pointerEvents: 'none',
+                 position: 'absolute',
+                 top: 0,
+                 left: 0,
+                 zIndex: 1
+               }}
+             />
+           </div>
         ) : null}
         
         <input
