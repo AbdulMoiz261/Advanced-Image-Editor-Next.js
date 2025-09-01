@@ -104,6 +104,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!canvasRef.current) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
@@ -116,6 +117,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       clientX: touch.clientX,
       clientY: touch.clientY,
       preventDefault: () => e.preventDefault(),
+      stopPropagation: () => e.stopPropagation(),
       // Add other required properties as needed
     } as unknown as React.MouseEvent<HTMLCanvasElement>;
     
@@ -124,6 +126,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!canvasRef.current) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
@@ -135,6 +138,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
       clientX: touch.clientX,
       clientY: touch.clientY,
       preventDefault: () => e.preventDefault(),
+      stopPropagation: () => e.stopPropagation(),
     } as unknown as React.MouseEvent<HTMLCanvasElement>;
     
     handleMouseMove(mockEvent);
@@ -142,6 +146,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
   
   const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     handleMouseUp();
   };
 
@@ -501,10 +506,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
           
           // Stop camera after capturing
           stopCamera();
-          
-          // Export the file
-          // const file = exportEditedFile();
-          // onEditedFile?.(file);
         };
         img.src = canvas.toDataURL('image/jpeg', 0.9);
       }
@@ -799,16 +800,14 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         offsetY = 0;
       }
       
-      // Fill background with light grey
-      ctx.fillStyle = '#f0f0f0';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Fill background with transparent
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       // Draw the image
       ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
     } else {
       // Show upload placeholder
-      ctx.fillStyle = '#f0f0f0';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#666666';
       ctx.textAlign = 'center';
       ctx.font = '24px Arial';
@@ -958,9 +957,14 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
               onTouchEnd={handleTouchEnd}
               style={{ 
                 cursor: getCursor(),
-                // width: "500px",   // fills parent
-                // height: "100%",  // fills parent
-                // display: "block" 
+                 touchAction: 'none',
+                 WebkitUserSelect: 'none',
+                 MozUserSelect: 'none',
+                 msUserSelect: 'none',
+                 userSelect: 'none',
+                 width: '100%',
+                 height: '100%',
+                 objectFit: 'contain'
               }}
             />
           </div>

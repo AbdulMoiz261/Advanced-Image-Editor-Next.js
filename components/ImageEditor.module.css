@@ -105,13 +105,100 @@
     display: flex;
     gap: 15px;
     justify-content: center;
+    flex-wrap: wrap;
   }
   
+  .chooseImageBtn, .cameraBtn {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 140px;
+    justify-content: center;
+  }
+
+  .chooseImageBtn:hover, .cameraBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+  }
+
+  .chooseImageBtn:active, .cameraBtn:active {
+    transform: translateY(0);
+  }
+  
+  .imageDisplayArea {
+    touch-action: none;      /* disables browser scrolling/pinch zoom on touch */
+    -ms-touch-action: none;  /* for older IE/Edge */
+    overscroll-behavior: contain; /* prevent "bounce" scroll chaining */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .imageEditorSimple {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .uploadContainer {
+    width: 100%;
+    min-height: 450px;
+    background-color: #f5f5f5;
+    border: 2px dashed #ddd;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 30px;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+
+  .uploadContainer:hover {
+    border-color: #8b5cf6;
+    background-color: #f8f7ff;
+    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.1);
+  }
+
+  .uploadContainer:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  .uploadContainer canvas {
+    width: 100%;
+    height: 100%;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    object-fit: contain;
+    background-color: white;
+  }
   
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .cameraControlsOverlay {
-      bottom: 130px;
+      bottom: 100px;
       gap: 40px;
     }
     
@@ -119,7 +206,6 @@
       width: 60px;
       height: 60px;
       background: rgba(251, 251, 251, 0.932);
-
     }
     
     .captureCircle {
@@ -134,27 +220,155 @@
       font-size: 18px;
     }
 
-    
+    .uploadContainer {
+      min-height: 350px;
+      padding: 30px 20px;
+    }
+
+    .uploadInstructions {
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .buttonContainer {
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .chooseImageBtn, .cameraBtn {
+      width: 100%;
+      max-width: 280px;
+      padding: 16px 24px;
+      font-size: 16px;
+      min-width: auto;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.25);
+    }
+
+    .chooseImageBtn:hover, .cameraBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.35);
+    }
+
+    .imageDisplayArea {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+    }
+
+    .imageDisplayArea canvas {
+      width: 100%;
+      height: 100%;
+      max-height: none;
+    }
   }
 
+  @media (max-width: 480px) {
+    .cameraControlsOverlay {
+      bottom: 80px;
+      gap: 30px;
+    }
+    
+    .captureBtnFullscreen {
+      width: 55px;
+      height: 55px;
+    }
+    
+    .captureCircle {
+      width: 45px;
+      height: 45px;
+    }
+    
+    .closeCameraBtn,
+    .flipCameraBtn {
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+      top: 20px;
+    }
 
+    .closeCameraBtn {
+      right: 15px;
+    }
+
+    .flipCameraBtn {
+      left: 15px;
+    }
+
+    .uploadContainer {
+      min-height: 300px;
+      padding: 20px 15px;
+    }
+
+    .uploadInstructions {
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .buttonContainer {
+      gap: 10px;
+      width: 100%;
+    }
 
   .chooseImageBtn, .cameraBtn {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.2s;
+      width: 100%;
+      max-width: 240px;
+      padding: 14px 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+    }
+
+    .chooseImageBtn:hover, .cameraBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+    }
+
+    .imageDisplayArea {
+      height: 100%;
+      min-height: 250px;
+    }
+
+    .imageDisplayArea canvas {
+      height: 100%;
+      max-height: none;
+    }
   }
 
+  @media (max-width: 360px) {
+    .uploadContainer {
+      min-height: 280px;
+      padding: 15px 10px;
+    }
 
+    .uploadInstructions {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chooseImageBtn, .cameraBtn {
+      width: 100%;
+      max-width: 200px;
+      padding: 12px 18px;
+      font-size: 14px;
+      border-radius: 8px;
+      box-shadow: 0 3px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .chooseImageBtn:hover, .cameraBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+    }
   
-  
-  .imageDisplayArea {
-    touch-action: none;      /* disables browser scrolling/pinch zoom on touch */
-    -ms-touch-action: none;  /* for older IE/Edge */
-    overscroll-behavior: contain; /* prevent "bounce" scroll chaining */
+      .imageDisplayArea {
+      height: 100%;
+      min-height: 220px;
+    }
+
+    .imageDisplayArea canvas {
+      height: 100%;
+      max-height: none;
+    }
   }
