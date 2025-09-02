@@ -311,7 +311,7 @@ export default function Home() {
   };
 
   // Arrow color options
-  const arrowColors = ['#FF8C00', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#800080', '#000000', '#FFFFFF'];
+  const arrowColors = ['#FF8C00', '#FF0000', '#FFFF00','#00FF00', '#287405ff', '#0000FF',  '#FF00FF', '#00FFFF', '#FFFFFF' ,'#800080', '#000000','#00ffb3ff'];
 
   if (isSubmitting) {
     return (
@@ -408,9 +408,9 @@ export default function Home() {
           
           {showDrawingDropdown && (
             <div className="arrow-dropdown">
-              <div className="arrow-dropdown-header">
+              {/* <div className="arrow-dropdown-header">
                 <span>Select Drawing Color</span>
-              </div>
+              </div> */}
               <div className="arrow-color-options">
                 {arrowColors.map(color => (
                   <div 

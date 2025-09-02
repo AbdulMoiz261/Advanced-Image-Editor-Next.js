@@ -152,7 +152,7 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    z-index: 10;
+    z-index: 10;  
     overflow: hidden;
   }
 
