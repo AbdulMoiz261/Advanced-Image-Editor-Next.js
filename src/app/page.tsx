@@ -244,6 +244,8 @@ export default function Home() {
       formData.append('image', editedFile); // "image" will be req.formData().get("image")
       formData.append('description', `${description} | Location: ${selectedLocation}`);
       formData.append('location', selectedLocation);
+
+      console.log(formData)
     
       // ✅ Send to API endpoint as multipart/form-data
       const response = await fetch('/api/llm/analyze-image', {

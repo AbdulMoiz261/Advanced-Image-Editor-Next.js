@@ -20,6 +20,9 @@ export default function PropertyReport() {
   const [hasCosts, setHasCosts] = useState<boolean>(false);
   const [image2, setImage2] = useState<string | File | null>(null)
 
+  const [totalCosts, setTotalCosts] = useState(0);
+  const [diyCost, setDiyCost] = useState<string>('');
+
 
   
   useEffect(() => {
@@ -27,6 +30,8 @@ export default function PropertyReport() {
     if (!analysisData) {
       router.push('/');
     }
+
+    console.log(analysisData);
     setCurrentDate(now.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -41,16 +46,22 @@ export default function PropertyReport() {
       const { image, description, location, analysisResult } = analysisData;
       setDescription(description);
       setImage2(image);
-      if (analysisResult) {
-        setTitle(analysisResult.title || '');
-        setDescription1(analysisResult.description || '');
-        setRecommendedAction(analysisResult.recommended_action || '');
-        setAnalysis(analysisResult.analysis || '');
 
+      // setCosts(analysisData.estimated_costs)
+      // setCosts([])
+              if (analysisResult) {
+        setDescription1(analysisResult.defect || '');
+        setRecommendedAction(analysisResult.recommendation || '');
+        setAnalysis(analysisResult.diy_option || '');
+
+        console.log(analysisResult.estimated_costs)
+        setTotalCosts((analysisResult.total_estimated_cost || 0));
+        setDiyCost(String(analysisResult.diy_cost || ''));
+        
         // Handle costs array
-        if (analysisResult.costs && Array.isArray(analysisResult.costs)) {
-          setCosts(analysisResult.costs);
-          setHasCosts(analysisResult.costs.length > 0);
+        if (analysisResult.estimated_costs && Array.isArray(analysisResult.estimated_costs)) {
+          setCosts(analysisResult.estimated_costs);
+          setHasCosts(analysisResult.estimated_costs.length > 0);
         } else {
           setCosts([]);
           setHasCosts(false);
@@ -91,24 +102,24 @@ export default function PropertyReport() {
   };
   
   // Helper function to get total cost
-  const getTotalCost = (): string => {
-    const totalCost = costs.find(cost => cost.type === 'total');
-    return totalCost ? totalCost.amount : calculateTotal(); // fallback if no total provided
-  };
+  // const getTotalCost = (): string => {
+  //   const totalCost = costs.find(cost => cost.type === 'total');
+  //   return totalCost ? totalCost.amount : calculateTotal(); // fallback if no total provided
+  // };
 
-  const calculateTotal = (): string => {
-    const nonTotalCosts = costs.filter(cost => cost.type !== 'total');
-    let total = 0;
+  // const calculateTotal = (): string => {
+  //   const nonTotalCosts = costs.filter(cost => cost.type !== 'total');
+  //   let total = 0;
     
-    nonTotalCosts.forEach(cost => {
-      const amount = parseFloat(cost.amount.replace(/[^\d.]/g, ''));
-      if (!isNaN(amount)) {
-        total += amount;
-      }
-    });
+  //   nonTotalCosts.forEach(cost => {
+  //     const amount = parseFloat(cost.amount.replace(/[^\d.]/g, ''));
+  //     if (!isNaN(amount)) {
+  //       total += amount;
+  //     }
+  //   });
     
-    return `$${total.toFixed(2)}`;
-  };
+  //   return `$${total.toFixed(2)}`;
+  // };
 
   // const { image, location, analysisResult } = analysisData;
   // const { image, location } = analysisData;
@@ -146,7 +157,7 @@ export default function PropertyReport() {
           <h2><i className="fas fa-camera icon"></i>Visual Evidence</h2>
           <div className="image-container">
             {/* Replace the placeholder with actual image */}
-            {image2 ? (
+                        {image2 ? (
               <img 
                 src={typeof image2 === 'string' ? image2 : URL.createObjectURL(image2)} 
                 alt="Damage analysis" 
@@ -157,13 +168,17 @@ export default function PropertyReport() {
                   borderRadius: '8px',
                   boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
                 }}
+                onError={(e) => {
+                  console.error('Image failed to load');
+                  // (e.target as HTMLImageElement).style.display = 'none';
+                }}
               />
-            ) : (
-              <div className="image-placeholder">
-                <i className="fas fa-image fa-3x" style={{marginRight: '10px'}}></i>
-                <span>Image of damaged exterior door trim</span>
-              </div>
-            )}
+) : (
+  <div className="image-placeholder">
+    <i className="fas fa-image fa-3x" style={{marginRight: '10px'}}></i>
+    <span>Image of damaged exterior door trim</span>
+  </div>
+)}
           </div>
           <p className="image-caption">Figure 1: {description}</p>
         </div>
@@ -172,28 +187,63 @@ export default function PropertyReport() {
             <h2><i className="fas fa-tools icon"></i>Recommended Action</h2>
             <p>{recommendedAction}.</p>
           </div>
+
+          <div className="diy-section">
+            <h2><i className="fas fa-wrench icon"></i>DIY Option</h2>
+            <p>{analysis}</p>
+            {diyCost && (
+              <p><strong>DIY Cost:</strong> ${diyCost}</p>
+            )}
+            <br></br>
+          </div>
+
+          {/* <div className="diy-section">
+            <h2><i className="fas fa-dollar-sign icon"></i>DIY Cost</h2>
+            {diyCost && (
+              <p><strong> ${diyCost}</strong></p>
+            )}
+            <br></br>
+          </div> */}
           
           <div className="costs-section">
             <h2><i className="fas fa-dollar-sign icon"></i>Estimated Costs</h2>
             
             {costs
-              .filter(cost => cost.type !== 'total')
-              // console.log('hi');
-              .map((cost, index) => (
-                // console.log('hii');
-                <div key={index} className="cost-item">
-                  <div className="cost-type">
-                    <i className={getCostIcon(cost.type)}></i>
-                     {capitalizeFirstLetter(cost.type)}
-                    <div className="cost-desc">{cost.description}</div>
-                  </div>
-                  <div className="cost-amount">{cost.amount}</div>
-                </div>
-              ))
-            }
+  .filter(cost => cost.type !== 'total')
+  .map((cost, index) => (
+    <div key={index} className="cost-item">
+      <div className="cost-type">
+        {cost.type === 'labor' ? (
+          <>
+            <strong>Labor Type:</strong> {capitalizeFirstLetter(cost.item)}
+            <br />
+            <strong>Hourly Rate:</strong> ${cost.unit_cost}
+            <br />
+            <strong>Hours Required:</strong> {cost.quantity}
+            <br />
+            <strong>Total Labor Cost:</strong> ${cost.total_cost}
+          </>
+        ) : (
+          <>
+            <strong>Material Item:</strong> {capitalizeFirstLetter(cost.item)}
+            <br />
+            <strong>Material Type:</strong> {cost.type}
+            <br />
+            <strong>Unit Cost:</strong> ${cost.unit_cost}
+            <br />
+            <strong>Quantity:</strong> {cost.quantity}
+            <br />
+            <strong>Total Material Cost:</strong> ${cost.total_cost}
+          </>
+        )}
+      </div>
+    </div>
+  ))
+}
+
             
             <div className="total-cost">
-              Total Estimated Cost: {getTotalCost()}
+              Total Estimated Cost: ${totalCosts}
             </div>
           </div>
           
